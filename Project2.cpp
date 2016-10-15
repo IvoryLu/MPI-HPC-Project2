@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <omp.h>
 #include <mpi.h>
 
@@ -58,7 +59,10 @@ static long *signatures = new long[length_of_array];     //signatures of all row
 
 int main(void)
 {
-    int numtasks, taskid, len, rc;
+	struct timeval start, end;
+	gettimeofday(&start, NULL);
+
+	int numtasks, taskid, len, rc;
     char hostname[MPI_MAX_PROCESSOR_NAME];
     int partner, message;
     long individual_index;
@@ -69,8 +73,6 @@ int main(void)
     MPI_Get_processor_name(hostname, &len);
     //read data:
     readData();
-
-
     readKeys();
     //split col index into different nodes
     int col_each_task = (int)(500 / (numtasks - 1)) + 1;
@@ -247,6 +249,12 @@ int main(void)
             printf("%d: Send correspond_col failure\n", taskid);
     }
     MPI_Finalize();
+	
+	gettimeofday(&end, NULL);
+	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
+
+	printf("time=%12.10f\n",delta);
+	
     return 0;
 }
 
