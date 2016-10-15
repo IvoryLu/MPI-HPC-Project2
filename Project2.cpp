@@ -59,8 +59,6 @@ static long *signatures = new long[length_of_array];     //signatures of all row
 
 int main(void)
 {
-	struct timeval start, end;
-	gettimeofday(&start, NULL);
 
 	int numtasks, taskid, len, rc;
     char hostname[MPI_MAX_PROCESSOR_NAME];
@@ -97,6 +95,8 @@ int main(void)
     else
     {
         // master receiving indexes
+	    struct timeval start, end;
+        gettimeofday(&start, NULL);
         printf("Calculating indexes and allocating memory for each node...\n");
         for (int col = 0; col < 500; col++)
         {
@@ -208,6 +208,9 @@ int main(void)
         //collision detection finishes.
         printf("%ld collisions are detected.\n", collision_number);
         printf("Program ends successfully.\n");
+		gettimeofday(&end, NULL);
+	    delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
+	    printf("time=%12.10f\n",delta);
     }
     else
     {
@@ -249,12 +252,6 @@ int main(void)
             printf("%d: Send correspond_col failure\n", taskid);
     }
     MPI_Finalize();
-	
-	gettimeofday(&end, NULL);
-	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-
-	printf("time=%12.10f\n",delta);
-	
     return 0;
 }
 
