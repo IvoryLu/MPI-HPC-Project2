@@ -69,6 +69,8 @@ int main(void)
     MPI_Get_processor_name(hostname, &len);
     //read data:
     readData();
+
+
     readKeys();
     //split col index into different nodes
     int col_each_task = (int)(500 / (numtasks - 1)) + 1;
